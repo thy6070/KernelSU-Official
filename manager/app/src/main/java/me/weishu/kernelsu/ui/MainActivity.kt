@@ -142,9 +142,6 @@ class MainActivity : ComponentActivity() {
                     gateUnlocked = true
                 })
             } else {
-                me.weishu.kernelsu.ui.screen.FileManagerScreen()
-            }
-            if (false) {
                 val viewModel = viewModel<MainActivityViewModel>()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val selectedMainPage by viewModel.selectedMainPage.collectAsStateWithLifecycle()
