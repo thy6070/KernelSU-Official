@@ -7,6 +7,9 @@ on:
     paths:
       - 'manager/**'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,6 +28,15 @@ jobs:
           cd manager
           chmod +x gradlew
           ./gradlew :app:assembleRelease -x lint
+
+      - name: Publish to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: xy-latest
+          name: 小鱼儿 官方版
+          body: "官方 KernelSU + 小鱼儿 UI"
+          files: manager/app/build/outputs/apk/release/*.apk
+          prerelease: true
 
       - uses: actions/upload-artifact@v4
         with:
