@@ -143,7 +143,7 @@ class MainActivity : ComponentActivity() {
                     onOpenSettings = { gateOpenSettings = true }
                 )
             }
-            if (false) {
+            if (gateOpenSettings) {
                 val viewModel = viewModel<MainActivityViewModel>()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val selectedMainPage by viewModel.selectedMainPage.collectAsStateWithLifecycle()
