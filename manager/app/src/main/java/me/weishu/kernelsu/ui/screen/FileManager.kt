@@ -1218,7 +1218,7 @@ private fun ProMaxIsland(
                         tint = Color.White,
                         modifier = Modifier
                             .size(22.dp)
-                            .clickable { }
+                            .clickable { onNavigate("install") }
                     )
                 }
             }
@@ -1238,18 +1238,9 @@ private fun ProMaxIsland(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    NavIcon(Icons.Outlined.InsertDriveFile) {
-                        expanded = false; navMode = false; navTarget = null
-                        onNavigate("home")
-                    }
-                    NavIcon(Icons.Outlined.AdminPanelSettings) {
-                        expanded = false; navMode = false; navTarget = null
-                        onNavigate("su")
-                    }
-                    NavIcon(Icons.Outlined.Layers) {
-                        expanded = false; navMode = false; navTarget = null
-                        onNavigate("module")
-                    }
+                    NavIcon(Icons.Outlined.InsertDriveFile) { openNav("home") }
+                    NavIcon(Icons.Outlined.AdminPanelSettings) { openNav("su") }
+                    NavIcon(Icons.Outlined.Layers) { openNav("module") }
                     NavIcon(Icons.Outlined.Settings) {
                         expanded = false; navMode = false; navTarget = null
                         onNavigate("settings")
