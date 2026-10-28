@@ -162,7 +162,7 @@ data class SuApp(val pkg: String, val label: String, val uid: Int, val allowed: 
 data class FsEntry(val name: String, val isDir: Boolean)
 
 @Composable
-fun FileManagerScreen(onBack: () -> Unit = {}, onOpenSettings: () -> Unit = {}) {
+fun FileManagerScreen(onBack: () -> Unit = {}, onNavigate: (String) -> Unit = {}) {
     val appCtx = LocalContext.current
     val view = LocalView.current
 
@@ -293,7 +293,7 @@ fun FileManagerScreen(onBack: () -> Unit = {}, onOpenSettings: () -> Unit = {}) 
 
     val uiCtx = androidx.compose.ui.platform.LocalContext.current
     ProMaxIsland(
-        onOpenSettings = onOpenSettings,
+        onNavigate = onNavigate,
         panelOpen = panel,
         selectedFile = selectedFile,
         onClearSelection = { selectedFile = null },
@@ -763,7 +763,7 @@ fun FileManagerScreen(onBack: () -> Unit = {}, onOpenSettings: () -> Unit = {}) 
 @Composable
 private fun ProMaxIsland(
     onBack: () -> Unit = {},
-    onOpenSettings: () -> Unit = {},
+    onNavigate: (String) -> Unit = {},
     panelOpen: Boolean,
     selectedFile: String?,
     runMessage: String?,
@@ -1238,14 +1238,21 @@ private fun ProMaxIsland(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    NavIcon(Icons.Outlined.InsertDriveFile) { openNav("home") }
-                    NavIcon(Icons.Outlined.AdminPanelSettings) { openNav("su") }
-                    NavIcon(Icons.Outlined.Layers) { openNav("module") }
+                    NavIcon(Icons.Outlined.InsertDriveFile) {
+                        expanded = false; navMode = false; navTarget = null
+                        onNavigate("home")
+                    }
+                    NavIcon(Icons.Outlined.AdminPanelSettings) {
+                        expanded = false; navMode = false; navTarget = null
+                        onNavigate("su")
+                    }
+                    NavIcon(Icons.Outlined.Layers) {
+                        expanded = false; navMode = false; navTarget = null
+                        onNavigate("module")
+                    }
                     NavIcon(Icons.Outlined.Settings) {
-                        expanded = false
-                        navMode = false
-                        navTarget = null
-                        onOpenSettings()
+                        expanded = false; navMode = false; navTarget = null
+                        onNavigate("settings")
                     }
                 }
             }
