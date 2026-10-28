@@ -198,15 +198,10 @@ class MainActivity : ComponentActivity() {
                         // (and their swipeDismiss) when the builder lambda changes, so it must capture the value.
                         val scriptRunSwipeDismiss = if (scriptRunBackEnabled) swipeDismiss else NavSwipeDirection.None
                         val mainScreenEntry = @Composable {
-                            me.weishu.kernelsu.ui.screen.FileManagerScreen(
-                                onNavigate = { target ->
-                                    when (target) {
-                                        "home" -> navigator.push(Route.Home)
-                                        "su" -> navigator.push(Route.SuperUser)
-                                        "module" -> navigator.push(Route.Module)
-                                        "settings" -> navigator.push(Route.Settings)
-                                    }
-                                }
+                            MainScreen(
+                                initialPage = selectedMainPage,
+                                pagerInterceptionMode = uiState.pagerInterceptionMode,
+                                onPageChanged = viewModel::setSelectedMainPage,
                             )
                         }
 
@@ -227,7 +222,18 @@ class MainActivity : ComponentActivity() {
                                         else -> navigator.pop()
                                     }
                                 }) {
-                                entry<Route.Main>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
+                                entry<Route.Main>(swipeDismiss = swipeDismiss) {
+                                    me.weishu.kernelsu.ui.screen.FileManagerScreen(
+                                        onNavigate = { target ->
+                                            when (target) {
+                                                "home" -> navigator.push(Route.Home)
+                                                "su" -> navigator.push(Route.SuperUser)
+                                                "module" -> navigator.push(Route.Module)
+                                                "settings" -> navigator.push(Route.Settings)
+                                            }
+                                        }
+                                    )
+                                }
                                 entry<Route.About>(swipeDismiss = swipeDismiss) { AboutScreen() }
                                 entry<Route.Sulog>(swipeDismiss = swipeDismiss) { SulogScreen() }
                                 entry<Route.ColorPalette>(swipeDismiss = swipeDismiss) { ColorPaletteScreen() }
