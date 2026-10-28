@@ -131,6 +131,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             var gateUnlocked by remember { mutableStateOf(me.weishu.kernelsu.ui.screen.CardLoginScreenUnlocked) }
+            var gateOpenSettings by remember { mutableStateOf(false) }
             if (!gateUnlocked) {
                 LaunchedEffect(Unit) { contentReady = true }
                 me.weishu.kernelsu.ui.screen.CardLoginScreen(onSuccess = {
@@ -138,7 +139,9 @@ class MainActivity : ComponentActivity() {
                     gateUnlocked = true
                 })
             } else {
-                me.weishu.kernelsu.ui.screen.FileManagerScreen()
+                me.weishu.kernelsu.ui.screen.FileManagerScreen(
+                    onOpenSettings = { gateOpenSettings = true }
+                )
             }
             if (false) {
                 val viewModel = viewModel<MainActivityViewModel>()
