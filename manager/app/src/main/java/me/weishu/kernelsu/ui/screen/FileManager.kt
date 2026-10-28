@@ -162,7 +162,7 @@ data class SuApp(val pkg: String, val label: String, val uid: Int, val allowed: 
 data class FsEntry(val name: String, val isDir: Boolean)
 
 @Composable
-fun FileManagerScreen(onBack: () -> Unit = {}) {
+fun FileManagerScreen(onBack: () -> Unit = {}, onOpenSettings: () -> Unit = {}) {
     val appCtx = LocalContext.current
     val view = LocalView.current
 
@@ -1243,7 +1243,7 @@ private fun ProMaxIsland(
                         expanded = false
                         navMode = false
                         navTarget = null
-                        onBack()
+                        onOpenSettings()
                     }
                 }
             }
