@@ -293,6 +293,7 @@ fun FileManagerScreen(onBack: () -> Unit = {}, onOpenSettings: () -> Unit = {}) 
 
     val uiCtx = androidx.compose.ui.platform.LocalContext.current
     ProMaxIsland(
+        onOpenSettings = onOpenSettings,
         panelOpen = panel,
         selectedFile = selectedFile,
         onClearSelection = { selectedFile = null },
@@ -762,6 +763,7 @@ fun FileManagerScreen(onBack: () -> Unit = {}, onOpenSettings: () -> Unit = {}) 
 @Composable
 private fun ProMaxIsland(
     onBack: () -> Unit = {},
+    onOpenSettings: () -> Unit = {},
     panelOpen: Boolean,
     selectedFile: String?,
     runMessage: String?,
