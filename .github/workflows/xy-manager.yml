@@ -23,6 +23,14 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - name: Signing setup
+        run: |
+          base64 -d .github/brand/signing.jks > /tmp/signing.jks
+          echo "KEYSTORE_FILE=/tmp/signing.jks" >> $GITHUB_ENV
+          echo "KEYSTORE_PASSWORD=$(cat .github/brand/pass.txt)" >> $GITHUB_ENV
+          echo "KEY_ALIAS=key0" >> $GITHUB_ENV
+          echo "KEY_PASSWORD=$(cat .github/brand/pass.txt)" >> $GITHUB_ENV
+
       - name: Build with Gradle
         run: |
           cd manager
