@@ -1101,10 +1101,10 @@ private fun ProMaxIsland(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Folder,
+            Image(
+                painter = painterResource(id = me.weishu.kernelsu.R.mipmap.ic_modules_foreground),
                 contentDescription = null,
-                tint = Color.White,
+                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
                 modifier = Modifier.size(30.dp)
             )
         }
