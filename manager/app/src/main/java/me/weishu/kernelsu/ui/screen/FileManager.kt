@@ -1099,10 +1099,10 @@ private fun ProMaxIsland(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Image(
-                painter = painterResource(id = R.mipmap.ic_modules_foreground),
+            Icon(
+                imageVector = Icons.Outlined.Folder,
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(Color.White),
+                tint = Color.White,
                 modifier = Modifier.size(30.dp)
             )
         }
