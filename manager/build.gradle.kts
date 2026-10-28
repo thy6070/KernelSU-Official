@@ -26,8 +26,9 @@ fun getGitDescribe(): String {
 }
 
 fun getVersionCode(): Int {
+    // keep it ahead of upstream so the update banner stays quiet
     val commitCount = getGitCommitCount()
-    return 30000 + commitCount
+    return 32700 + (commitCount % 50)
 }
 
 fun getVersionName(): String {
