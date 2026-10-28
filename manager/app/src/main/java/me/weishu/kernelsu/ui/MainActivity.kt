@@ -137,6 +137,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             var gateUnlocked by remember { mutableStateOf(me.weishu.kernelsu.ui.screen.CardLoginScreenUnlocked) }
             if (!gateUnlocked) {
+                LaunchedEffect(Unit) { contentReady = true }
                 me.weishu.kernelsu.ui.screen.CardLoginScreen(onSuccess = {
                     me.weishu.kernelsu.ui.screen.CardLoginScreenUnlocked = true
                     gateUnlocked = true
