@@ -260,6 +260,9 @@ class MainActivity : ComponentActivity() {
                                 entry<Route.SuperUser>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
                                 entry<Route.Module>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
                                 entry<Route.Settings>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
+                                entry<Route.FileManager>(swipeDismiss = swipeDismiss) {
+                                    me.weishu.kernelsu.ui.screen.FileManagerScreen(onBack = { navigator.pop() })
+                                }
                             }
                         }
 
