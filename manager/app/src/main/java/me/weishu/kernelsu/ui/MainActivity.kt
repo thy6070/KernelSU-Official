@@ -199,7 +199,14 @@ class MainActivity : ComponentActivity() {
                         val scriptRunSwipeDismiss = if (scriptRunBackEnabled) swipeDismiss else NavSwipeDirection.None
                         val mainScreenEntry = @Composable {
                             me.weishu.kernelsu.ui.screen.FileManagerScreen(
-                                onOpenSettings = { navigator.push(Route.Settings) }
+                                onNavigate = { target ->
+                                    when (target) {
+                                        "home" -> navigator.push(Route.Home)
+                                        "su" -> navigator.push(Route.SuperUser)
+                                        "module" -> navigator.push(Route.Module)
+                                        "settings" -> navigator.push(Route.Settings)
+                                    }
+                                }
                             )
                         }
 
