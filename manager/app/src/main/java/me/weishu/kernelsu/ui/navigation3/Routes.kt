@@ -41,6 +41,10 @@ sealed interface Route : NavKey, Parcelable {
 
     @Parcelize
     @Serializable
+    data object FileManager : Route
+
+    @Parcelize
+    @Serializable
     data object About : Route
 
     @Parcelize
