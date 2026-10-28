@@ -29,8 +29,6 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.foundation.Image
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.ui.graphics.ColorFilter
-import com.ramcosta.composedestinations.generated.destinations.InstallScreenDestination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.AnimatedVisibility
@@ -71,10 +69,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
-import com.ramcosta.composedestinations.generated.destinations.HomeScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.SuperUserScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.ModuleScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.SettingScreenDestination
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.AdminPanelSettings
 import androidx.compose.material.icons.outlined.Layers
@@ -168,7 +162,7 @@ data class SuApp(val pkg: String, val label: String, val uid: Int, val allowed: 
 data class FsEntry(val name: String, val isDir: Boolean)
 
 @Composable
-fun FileManagerScreen(navigator: DestinationsNavigator) {
+fun FileManagerScreen(onBack: () -> Unit = {}) {
     val appCtx = LocalContext.current
     val view = LocalView.current
 
@@ -299,7 +293,6 @@ fun FileManagerScreen(navigator: DestinationsNavigator) {
 
     val uiCtx = androidx.compose.ui.platform.LocalContext.current
     ProMaxIsland(
-        navigator = navigator,
         panelOpen = panel,
         selectedFile = selectedFile,
         onClearSelection = { selectedFile = null },
@@ -768,7 +761,7 @@ fun FileManagerScreen(navigator: DestinationsNavigator) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ProMaxIsland(
-    navigator: DestinationsNavigator,
+    onBack: () -> Unit = {},
     panelOpen: Boolean,
     selectedFile: String?,
     runMessage: String?,
@@ -1223,7 +1216,7 @@ private fun ProMaxIsland(
                         tint = Color.White,
                         modifier = Modifier
                             .size(22.dp)
-                            .clickable { navigator.navigate(InstallScreenDestination) }
+                            .clickable { }
                     )
                 }
             }
@@ -1250,7 +1243,7 @@ private fun ProMaxIsland(
                         expanded = false
                         navMode = false
                         navTarget = null
-                        navigator.navigate(SettingScreenDestination)
+                        onBack()
                     }
                 }
             }
