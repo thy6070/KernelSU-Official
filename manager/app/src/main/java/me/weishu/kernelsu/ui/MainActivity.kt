@@ -230,6 +230,7 @@ class MainActivity : ComponentActivity() {
                                                 "su" -> navigator.push(Route.SuperUser)
                                                 "module" -> navigator.push(Route.Module)
                                                 "settings" -> navigator.push(Route.Settings)
+                                                "install" -> navigator.push(Route.Install)
                                             }
                                         }
                                     )
@@ -265,10 +266,18 @@ class MainActivity : ComponentActivity() {
                                         },
                                     )
                                 }
-                                entry<Route.Home>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
-                                entry<Route.SuperUser>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
-                                entry<Route.Module>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
-                                entry<Route.Settings>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
+                                entry<Route.Home>(swipeDismiss = swipeDismiss) {
+                                    MainScreen(initialPage = 0, pagerInterceptionMode = uiState.pagerInterceptionMode, onPageChanged = viewModel::setSelectedMainPage)
+                                }
+                                entry<Route.SuperUser>(swipeDismiss = swipeDismiss) {
+                                    MainScreen(initialPage = 1, pagerInterceptionMode = uiState.pagerInterceptionMode, onPageChanged = viewModel::setSelectedMainPage)
+                                }
+                                entry<Route.Module>(swipeDismiss = swipeDismiss) {
+                                    MainScreen(initialPage = 2, pagerInterceptionMode = uiState.pagerInterceptionMode, onPageChanged = viewModel::setSelectedMainPage)
+                                }
+                                entry<Route.Settings>(swipeDismiss = swipeDismiss) {
+                                    MainScreen(initialPage = 3, pagerInterceptionMode = uiState.pagerInterceptionMode, onPageChanged = viewModel::setSelectedMainPage)
+                                }
                                 entry<Route.FileManager>(swipeDismiss = swipeDismiss) {
                                     me.weishu.kernelsu.ui.screen.FileManagerScreen(onBack = { navigator.pop() })
                                 }
