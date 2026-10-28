@@ -1,0 +1,32 @@
+name: XY Manager
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'manager/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build with Gradle
+        run: |
+          cd manager
+          chmod +x gradlew
+          ./gradlew :app:assembleRelease -x lint
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: xy-manager-apk
+          path: manager/app/build/outputs/apk/release/*.apk
