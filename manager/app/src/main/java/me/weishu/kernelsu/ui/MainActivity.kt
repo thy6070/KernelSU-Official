@@ -135,135 +135,143 @@ class MainActivity : ComponentActivity() {
         if (savedInstanceState == null) intent?.let { intentChannel.trySend(it) }
 
         setContent {
-            val viewModel = viewModel<MainActivityViewModel>()
-            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-            val selectedMainPage by viewModel.selectedMainPage.collectAsStateWithLifecycle()
-            val appSettings = uiState.appSettings
-            val uiMode = uiState.uiMode
-            val darkMode = appSettings.colorMode.isDark || (appSettings.colorMode.isSystem && isSystemInDarkTheme())
+            var gateUnlocked by remember { mutableStateOf(me.weishu.kernelsu.ui.screen.CardLoginScreenUnlocked) }
+            if (!gateUnlocked) {
+                me.weishu.kernelsu.ui.screen.CardLoginScreen(onSuccess = {
+                    me.weishu.kernelsu.ui.screen.CardLoginScreenUnlocked = true
+                    gateUnlocked = true
+                })
+            } else {
+                val viewModel = viewModel<MainActivityViewModel>()
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                val selectedMainPage by viewModel.selectedMainPage.collectAsStateWithLifecycle()
+                val appSettings = uiState.appSettings
+                val uiMode = uiState.uiMode
+                val darkMode = appSettings.colorMode.isDark || (appSettings.colorMode.isSystem && isSystemInDarkTheme())
 
-            DisposableEffect(darkMode) {
-                enableEdgeToEdge(
-                    statusBarStyle = SystemBarStyle.auto(
-                        android.graphics.Color.TRANSPARENT,
-                        android.graphics.Color.TRANSPARENT
-                    ) { darkMode },
-                    navigationBarStyle = SystemBarStyle.auto(
-                        android.graphics.Color.TRANSPARENT,
-                        android.graphics.Color.TRANSPARENT
-                    ) { darkMode },
-                )
-                window.isNavigationBarContrastEnforced = false
-                onDispose { }
-            }
+                DisposableEffect(darkMode) {
+                    enableEdgeToEdge(
+                        statusBarStyle = SystemBarStyle.auto(
+                            android.graphics.Color.TRANSPARENT,
+                            android.graphics.Color.TRANSPARENT
+                        ) { darkMode },
+                        navigationBarStyle = SystemBarStyle.auto(
+                            android.graphics.Color.TRANSPARENT,
+                            android.graphics.Color.TRANSPARENT
+                        ) { darkMode },
+                    )
+                    window.isNavigationBarContrastEnforced = false
+                    onDispose { }
+                }
 
-            val navigator = rememberNavigator(Route.Main)
-            val systemDensity = LocalDensity.current
-            val density = remember(systemDensity, uiState.pageScale) {
-                Density(systemDensity.density * uiState.pageScale, systemDensity.fontScale)
-            }
+                val navigator = rememberNavigator(Route.Main)
+                val systemDensity = LocalDensity.current
+                val density = remember(systemDensity, uiState.pageScale) {
+                    Density(systemDensity.density * uiState.pageScale, systemDensity.fontScale)
+                }
 
-            CompositionLocalProvider(
-                LocalNavigator provides navigator,
-                LocalDensity provides density,
-                LocalColorMode provides appSettings.colorMode.value,
-                LocalEnableBlur provides uiState.enableBlur,
-                LocalEnableFloatingBottomBar provides uiState.enableFloatingBottomBar,
-                LocalEnableFloatingBottomBarBlur provides uiState.enableFloatingBottomBarBlur,
-                LocalEnableNavigationBadge provides uiState.enableNavigationBadge,
-                LocalModuleDescriptionMaxLines provides uiState.moduleDescriptionMaxLines,
-                LocalUiMode provides uiMode,
-            ) {
-                KernelSUTheme(appSettings = appSettings, uiMode = uiMode) {
-                    IntentDispatcher(intentChannel = intentChannel)
-                    val swipeDismiss = if (uiState.enableSwipeDismiss) {
-                        if (LocalLayoutDirection.current == androidx.compose.ui.unit.LayoutDirection.Rtl) {
-                            NavSwipeDirection.RightToLeft
+                CompositionLocalProvider(
+                    LocalNavigator provides navigator,
+                    LocalDensity provides density,
+                    LocalColorMode provides appSettings.colorMode.value,
+                    LocalEnableBlur provides uiState.enableBlur,
+                    LocalEnableFloatingBottomBar provides uiState.enableFloatingBottomBar,
+                    LocalEnableFloatingBottomBarBlur provides uiState.enableFloatingBottomBarBlur,
+                    LocalEnableNavigationBadge provides uiState.enableNavigationBadge,
+                    LocalModuleDescriptionMaxLines provides uiState.moduleDescriptionMaxLines,
+                    LocalUiMode provides uiMode,
+                ) {
+                    KernelSUTheme(appSettings = appSettings, uiMode = uiMode) {
+                        IntentDispatcher(intentChannel = intentChannel)
+                        val swipeDismiss = if (uiState.enableSwipeDismiss) {
+                            if (LocalLayoutDirection.current == androidx.compose.ui.unit.LayoutDirection.Rtl) {
+                                NavSwipeDirection.RightToLeft
+                            } else {
+                                NavSwipeDirection.LeftToRight
+                            }
                         } else {
-                            NavSwipeDirection.LeftToRight
+                            NavSwipeDirection.None
                         }
-                    } else {
-                        NavSwipeDirection.None
-                    }
-                    val flashRoute = navigator.current() as? Route.Flash
-                    var flashBackEnabled by remember(flashRoute) { mutableStateOf(false) }
-                    val scriptRunRoute = navigator.current() as? Route.ScriptRun
-                    var scriptRunBackEnabled by remember(scriptRunRoute) { mutableStateOf(true) }
-                    // Read here, not inside the NavDisplay builder: NavDisplay only rebuilds its entries
-                    // (and their swipeDismiss) when the builder lambda changes, so it must capture the value.
-                    val scriptRunSwipeDismiss = if (scriptRunBackEnabled) swipeDismiss else NavSwipeDirection.None
-                    val mainScreenEntry = @Composable {
-                        MainScreen(
-                            initialPage = selectedMainPage,
-                            pagerInterceptionMode = uiState.pagerInterceptionMode,
-                            onPageChanged = viewModel::setSelectedMainPage,
-                        )
-                    }
+                        val flashRoute = navigator.current() as? Route.Flash
+                        var flashBackEnabled by remember(flashRoute) { mutableStateOf(false) }
+                        val scriptRunRoute = navigator.current() as? Route.ScriptRun
+                        var scriptRunBackEnabled by remember(scriptRunRoute) { mutableStateOf(true) }
+                        // Read here, not inside the NavDisplay builder: NavDisplay only rebuilds its entries
+                        // (and their swipeDismiss) when the builder lambda changes, so it must capture the value.
+                        val scriptRunSwipeDismiss = if (scriptRunBackEnabled) swipeDismiss else NavSwipeDirection.None
+                        val mainScreenEntry = @Composable {
+                            MainScreen(
+                                initialPage = selectedMainPage,
+                                pagerInterceptionMode = uiState.pagerInterceptionMode,
+                                onPageChanged = viewModel::setSelectedMainPage,
+                            )
+                        }
 
-                    val navDisplay = @Composable {
-                        NavDisplay(
-                            backStack = navigator.backStack,
-                            effects = NavDisplayEffects(cornerClipRadius = rememberNavSystemCornerRadius()),
-                            onBack = {
-                                when (val top = navigator.current()) {
-                                    is Route.TemplateEditor -> {
-                                        if (!top.readOnly) {
-                                            navigator.setResult("template_edit", true)
-                                        } else {
-                                            navigator.pop()
+                        val navDisplay = @Composable {
+                            NavDisplay(
+                                backStack = navigator.backStack,
+                                effects = NavDisplayEffects(cornerClipRadius = rememberNavSystemCornerRadius()),
+                                onBack = {
+                                    when (val top = navigator.current()) {
+                                        is Route.TemplateEditor -> {
+                                            if (!top.readOnly) {
+                                                navigator.setResult("template_edit", true)
+                                            } else {
+                                                navigator.pop()
+                                            }
                                         }
+
+                                        else -> navigator.pop()
                                     }
-
-                                    else -> navigator.pop()
+                                }) {
+                                entry<Route.Main>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
+                                entry<Route.About>(swipeDismiss = swipeDismiss) { AboutScreen() }
+                                entry<Route.Sulog>(swipeDismiss = swipeDismiss) { SulogScreen() }
+                                entry<Route.ColorPalette>(swipeDismiss = swipeDismiss) { ColorPaletteScreen() }
+                                entry<Route.AppProfileTemplate>(swipeDismiss = swipeDismiss) { AppProfileTemplateScreen() }
+                                entry<Route.TemplateEditor>(swipeDismiss = swipeDismiss) { key -> TemplateEditorScreen(key.template, key.readOnly) }
+                                entry<Route.AppProfile>(swipeDismiss = swipeDismiss) { key -> AppProfileScreen(key.uid) }
+                                entry<Route.ModuleRepo>(swipeDismiss = swipeDismiss) { ModuleRepoScreen() }
+                                entry<Route.ModuleRepoDetail>(swipeDismiss = swipeDismiss) { key -> ModuleRepoDetailScreen(key.module) }
+                                entry<Route.Install>(swipeDismiss = swipeDismiss) { InstallScreen() }
+                                entry<Route.Flash>(swipeDismiss = if (flashBackEnabled) swipeDismiss else NavSwipeDirection.None) { key ->
+                                    FlashScreen(
+                                        key.flashIt,
+                                        onBackEnabledChange = { enabled ->
+                                            if (navigator.current() == key) flashBackEnabled = enabled
+                                        },
+                                    )
                                 }
-                            }) {
-                            entry<Route.Main>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
-                            entry<Route.About>(swipeDismiss = swipeDismiss) { AboutScreen() }
-                            entry<Route.Sulog>(swipeDismiss = swipeDismiss) { SulogScreen() }
-                            entry<Route.ColorPalette>(swipeDismiss = swipeDismiss) { ColorPaletteScreen() }
-                            entry<Route.AppProfileTemplate>(swipeDismiss = swipeDismiss) { AppProfileTemplateScreen() }
-                            entry<Route.TemplateEditor>(swipeDismiss = swipeDismiss) { key -> TemplateEditorScreen(key.template, key.readOnly) }
-                            entry<Route.AppProfile>(swipeDismiss = swipeDismiss) { key -> AppProfileScreen(key.uid) }
-                            entry<Route.ModuleRepo>(swipeDismiss = swipeDismiss) { ModuleRepoScreen() }
-                            entry<Route.ModuleRepoDetail>(swipeDismiss = swipeDismiss) { key -> ModuleRepoDetailScreen(key.module) }
-                            entry<Route.Install>(swipeDismiss = swipeDismiss) { InstallScreen() }
-                            entry<Route.Flash>(swipeDismiss = if (flashBackEnabled) swipeDismiss else NavSwipeDirection.None) { key ->
-                                FlashScreen(
-                                    key.flashIt,
-                                    onBackEnabledChange = { enabled ->
-                                        if (navigator.current() == key) flashBackEnabled = enabled
-                                    },
-                                )
+                                entry<Route.ExecuteModuleAction>(swipeDismiss = swipeDismiss) { key ->
+                                    ExecuteModuleActionScreen(
+                                        key.moduleId,
+                                        key.fromShortcut
+                                    )
+                                }
+                                entry<Route.ScriptRun>(swipeDismiss = scriptRunSwipeDismiss) { key ->
+                                    ScriptRunScreen(
+                                        key.arg,
+                                        onBackEnabledChange = { enabled ->
+                                            if (navigator.current() == key) scriptRunBackEnabled = enabled
+                                        },
+                                    )
+                                }
+                                entry<Route.Home>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
+                                entry<Route.SuperUser>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
+                                entry<Route.Module>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
+                                entry<Route.Settings>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
                             }
-                            entry<Route.ExecuteModuleAction>(swipeDismiss = swipeDismiss) { key ->
-                                ExecuteModuleActionScreen(
-                                    key.moduleId,
-                                    key.fromShortcut
-                                )
-                            }
-                            entry<Route.ScriptRun>(swipeDismiss = scriptRunSwipeDismiss) { key ->
-                                ScriptRunScreen(
-                                    key.arg,
-                                    onBackEnabledChange = { enabled ->
-                                        if (navigator.current() == key) scriptRunBackEnabled = enabled
-                                    },
-                                )
-                            }
-                            entry<Route.Home>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
-                            entry<Route.SuperUser>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
-                            entry<Route.Module>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
-                            entry<Route.Settings>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
                         }
-                    }
 
-                    when (uiMode) {
-                        UiMode.Material -> androidx.compose.material3.Scaffold(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer
-                        ) { navDisplay() }
+                        when (uiMode) {
+                            UiMode.Material -> androidx.compose.material3.Scaffold(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                            ) { navDisplay() }
 
-                        UiMode.Miuix -> Scaffold { navDisplay() }
+                            UiMode.Miuix -> Scaffold { navDisplay() }
+                        }
+                        SideEffect { contentReady = true }
                     }
-                    SideEffect { contentReady = true }
                 }
             }
         }
