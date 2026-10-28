@@ -138,12 +138,8 @@ class MainActivity : ComponentActivity() {
                     me.weishu.kernelsu.ui.screen.CardLoginScreenUnlocked = true
                     gateUnlocked = true
                 })
-            } else {
-                me.weishu.kernelsu.ui.screen.FileManagerScreen(
-                    onOpenSettings = { gateOpenSettings = true }
-                )
             }
-            if (gateOpenSettings) {
+            if (true) {
                 val viewModel = viewModel<MainActivityViewModel>()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val selectedMainPage by viewModel.selectedMainPage.collectAsStateWithLifecycle()
@@ -202,10 +198,8 @@ class MainActivity : ComponentActivity() {
                         // (and their swipeDismiss) when the builder lambda changes, so it must capture the value.
                         val scriptRunSwipeDismiss = if (scriptRunBackEnabled) swipeDismiss else NavSwipeDirection.None
                         val mainScreenEntry = @Composable {
-                            MainScreen(
-                                initialPage = selectedMainPage,
-                                pagerInterceptionMode = uiState.pagerInterceptionMode,
-                                onPageChanged = viewModel::setSelectedMainPage,
+                            me.weishu.kernelsu.ui.screen.FileManagerScreen(
+                                onOpenSettings = { navigator.push(Route.Settings) }
                             )
                         }
 
