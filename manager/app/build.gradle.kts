@@ -73,7 +73,7 @@ android {
         }
         release {
             isMinifyEnabled = false
-            isShrinkResources = true
+            isShrinkResources = false
             vcsInfo.include = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             externalNativeBuild {
