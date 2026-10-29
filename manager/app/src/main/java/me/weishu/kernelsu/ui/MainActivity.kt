@@ -222,6 +222,14 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }) {
                                 entry<Route.Main>(swipeDismiss = swipeDismiss) {
+                                  androidx.compose.runtime.CompositionLocalProvider(
+                                      androidx.compose.material3.LocalTextStyle provides
+                                          androidx.compose.ui.text.TextStyle(
+                                              fontSize = 16.sp,
+                                              lineHeight = 24.sp,
+                                              letterSpacing = 0.5.sp
+                                          )
+                                  ) {
                                     me.weishu.kernelsu.ui.screen.FileManagerScreen(
                                         onNavigate = { target ->
                                             when (target) {
@@ -233,6 +241,7 @@ class MainActivity : ComponentActivity() {
                                             }
                                         }
                                     )
+                                  }
                                 }
                                 entry<Route.About>(swipeDismiss = swipeDismiss) { AboutScreen() }
                                 entry<Route.Sulog>(swipeDismiss = swipeDismiss) { SulogScreen() }
