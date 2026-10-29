@@ -2005,8 +2005,9 @@ private fun DarkActionButton(label: String, onClick: () -> Unit) {
             .clickable { onClick() }
             .background(Color(0xFF16161A), RoundedCornerShape(percent = 50))
             .border(0.5.dp, Color(0xFF3A3A3C), RoundedCornerShape(percent = 50))
-            .padding(vertical = 9.dp),
+            .padding(vertical = 13.dp),
         fontSize = 14.sp,
+        lineHeight = 18.sp,
         textAlign = TextAlign.Center,
         maxLines = 1,
         color = Color.White
@@ -2060,8 +2061,9 @@ private fun IslandActionButton(
             .fillMaxWidth()
             .clickable { onClick() }
             .background(color, RoundedCornerShape(percent = 50))
-            .padding(vertical = 9.dp),
+            .padding(vertical = 13.dp),
         fontSize = 14.sp,
+        lineHeight = 18.sp,
         textAlign = TextAlign.Center,
         maxLines = 1,
         color = Color.White
