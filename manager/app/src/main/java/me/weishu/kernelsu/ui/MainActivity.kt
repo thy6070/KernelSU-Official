@@ -222,6 +222,9 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }) {
                                 entry<Route.Main>(swipeDismiss = swipeDismiss) {
+                                  androidx.compose.material3.MaterialTheme(
+                                      typography = me.weishu.kernelsu.ui.screen.XyTypography
+                                  ) {
                                     me.weishu.kernelsu.ui.screen.FileManagerScreen(
                                         onNavigate = { target ->
                                             when (target) {
@@ -233,6 +236,7 @@ class MainActivity : ComponentActivity() {
                                             }
                                         }
                                     )
+                                  }
                                 }
                                 entry<Route.About>(swipeDismiss = swipeDismiss) { AboutScreen() }
                                 entry<Route.Sulog>(swipeDismiss = swipeDismiss) { SulogScreen() }
