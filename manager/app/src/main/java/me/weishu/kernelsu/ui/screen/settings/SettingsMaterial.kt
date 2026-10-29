@@ -104,7 +104,6 @@ fun SettingPagerMaterial(
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .verticalScroll(rememberScrollState())
         ) {
-            StatusCardSimple()
             KsuIsValid {
                 SegmentedColumn(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 13.dp),
@@ -407,48 +406,4 @@ private fun TopBar(
         windowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
         scrollBehavior = scrollBehavior
     )
-}
-
-
-@Composable
-private fun StatusCardSimple() {
-    val ksuVersion = me.weishu.kernelsu.Natives.version
-    val active = ksuVersion != 0
-    val container = if (active) MaterialTheme.colorScheme.secondaryContainer
-                    else MaterialTheme.colorScheme.errorContainer
-    val onContainer = if (active) MaterialTheme.colorScheme.onSecondaryContainer
-                      else MaterialTheme.colorScheme.onErrorContainer
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, bottom = 13.dp),
-        color = container,
-        contentColor = onContainer,
-        shape = MaterialTheme.shapes.large
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = if (active) Icons.Rounded.CheckCircle else Icons.Rounded.Warning,
-                contentDescription = null,
-                modifier = Modifier.padding(end = 14.dp)
-            )
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = if (active) "工作中" else "未安装",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = onContainer
-                )
-                Text(
-                    text = if (active) "版本 $ksuVersion" else "点击安装",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = onContainer.copy(alpha = 0.72f)
-                )
-            }
-        }
-    }
 }
