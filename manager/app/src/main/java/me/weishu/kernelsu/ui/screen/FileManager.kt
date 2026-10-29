@@ -429,38 +429,52 @@ fun FileManagerScreen(onBack: () -> Unit = {}, onNavigate: (String) -> Unit = {}
                                 ok = res.isSuccess
                             }
                             if (op == "share") {
-                                // file:// share: the FileProvider would add the gpi flag the scanner flags
-                                val name = java.io.File(srcPath).name
-                                val shareDir = java.io.File("/storage/emulated/0/小鱼儿/share")
+                                // source-style share: root copy into cacheDir, then FileProvider
+                                val shareDir = java.io.File(appCtx.cacheDir, "share")
                                 shareDir.mkdirs()
-                                val staged = java.io.File(shareDir, name)
-                                if (!staged.exists() || staged.length() == 0L) {
-                                    runCatching {
-                                        ProcessBuilder(suBin(), "-c",
-                                            "cp -f " + shq(srcPath) + " " + shq(staged.absolutePath) +
-                                                " ; chmod 644 " + shq(staged.absolutePath)).start().waitFor()
+                                val name = java.io.File(srcPath).name
+                                val dest = java.io.File(shareDir, name)
+                                try {
+                                    dest.delete()
+                                } catch (t: Throwable) {
+                                }
+                                runCatching {
+                                    val pr = Runtime.getRuntime().exec(arrayOf(suBin(), "-c",
+                                        "cp " + shq(srcPath) + " " + shq(dest.absolutePath) +
+                                            " ; chmod 644 " + shq(dest.absolutePath)))
+                                    pr.waitFor()
+                                }
+                                var note: String? = null
+                                var launched = false
+                                if (!dest.exists()) {
+                                    note = "提取失败"
+                                } else {
+                                    for (authority in listOf(appCtx.packageName + ".fileprovider")) {
+                                        if (launched) break
+                                        try {
+                                            val uri = androidx.core.content.FileProvider.getUriForFile(
+                                                appCtx, authority, dest
+                                            )
+                                            val send = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                                type = "application/octet-stream"
+                                                putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                                                putExtra(android.content.Intent.EXTRA_TITLE, name)
+                                                addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                            }
+                                            withContext(kotlinx.coroutines.Dispatchers.Main) {
+                                                val chooser = android.content.Intent.createChooser(send, "分享")
+                                                chooser.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                appCtx.startActivity(chooser)
+                                            }
+                                            launched = true
+                                        } catch (t: Throwable) {
+                                            note = t.message
+                                        }
                                     }
                                 }
-                                val target = if (staged.exists() && staged.length() > 0) staged else java.io.File(srcPath)
-                                try {
-                                    runCatching {
-                                        android.os.StrictMode.setVmPolicy(android.os.StrictMode.VmPolicy.Builder().build())
-                                    }
-                                    val uri = android.net.Uri.fromFile(target)
-                                    val send = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
-                                        type = "application/octet-stream"
-                                        putExtra(android.content.Intent.EXTRA_STREAM, uri)
-                                        putExtra(android.content.Intent.EXTRA_TITLE, name)
-                                        addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                    }
+                                if (!launched) {
                                     withContext(kotlinx.coroutines.Dispatchers.Main) {
-                                        val chooser = android.content.Intent.createChooser(send, "分享")
-                                        chooser.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                                        appCtx.startActivity(chooser)
-                                    }
-                                } catch (t: Throwable) {
-                                    withContext(kotlinx.coroutines.Dispatchers.Main) {
-                                        runMessage = "分享失败：" + (t.message ?: "").take(40)
+                                        runMessage = "分享失败：" + (note ?: "未知").take(40)
                                     }
                                 }
                             }
