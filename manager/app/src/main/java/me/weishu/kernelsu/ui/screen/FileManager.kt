@@ -1201,7 +1201,7 @@ private fun ProMaxIsland(
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(
                         imageVector = if (!rootChecked || rootOk) Icons.Outlined.TaskAlt
-                                      else Icons.Outlined.Close,
+                                      else Icons.Outlined.Lock,
                         contentDescription = if (rootChecked && !rootOk) "root unavailable" else "install",
                         tint = if (rootChecked && !rootOk) Color(0xFFFF3B30) else Color.White,
                         modifier = Modifier
