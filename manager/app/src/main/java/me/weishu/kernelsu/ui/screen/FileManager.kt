@@ -1987,8 +1987,9 @@ private fun GradientActionButton(label: String, color: Color, onClick: () -> Uni
             .fillMaxWidth()
             .clickable { onClick() }
             .background(color, RoundedCornerShape(percent = 50))
-            .padding(vertical = 9.dp),
+            .padding(vertical = 13.dp),
         fontSize = 14.sp,
+        lineHeight = 18.sp,
         textAlign = TextAlign.Center,
         maxLines = 1,
         color = Color.White
