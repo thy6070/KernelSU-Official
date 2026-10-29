@@ -3128,9 +3128,9 @@ internal fun isApk(n: String): Boolean {
 private suspend fun listDir(path: String): List<FsEntry> = withContext(Dispatchers.IO) {
     val norm = if (path.endsWith("/")) path else "$path/"
 
-    val shellOut = runCatching {
-        Shell.cmd("ls -1p \"$norm\" 2>/dev/null").exec().out
-    }.getOrDefault(emptyList())
+    // go straight through su: libsu may be uninitialised and silently yields an empty list
+    val shellOut = suNow("ls -1p \"$norm\" 2>/dev/null")
+        .lines().filter { it.isNotBlank() }
 
     val fromShell = shellOut
         .filter { it.isNotBlank() }
