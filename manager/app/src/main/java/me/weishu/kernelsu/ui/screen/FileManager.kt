@@ -3012,7 +3012,7 @@ private fun FsRow(
                     Modifier.border(1.dp, accent.copy(alpha = 0.38f), RoundedCornerShape(14.dp))
                 } else Modifier
             )
-            .padding(horizontal = 8.dp, vertical = 7.dp),
+            .padding(horizontal = 8.dp, vertical = 11.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         RowIcon(isDir = isDir, name = name, fullPath = fullPath)
@@ -3020,7 +3020,7 @@ private fun FsRow(
         Text(
             text = name,
             modifier = Modifier.weight(1f),
-            fontSize = 12.sp,
+            fontSize = 13.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             fontFamily = FontFamily.Monospace,
@@ -3060,13 +3060,13 @@ private fun RowIcon(isDir: Boolean, name: String, fullPath: String) {
         Image(
             bitmap = apkIconNow,
             contentDescription = null,
-            modifier = Modifier.size(18.dp)
+            modifier = Modifier.size(20.dp)
         )
     } else {
         Icon(
             imageVector = if (isDir) Icons.Outlined.Folder else Icons.Outlined.InsertDriveFile,
             contentDescription = null,
-            modifier = Modifier.size(18.dp),
+            modifier = Modifier.size(20.dp),
             tint = if (isDir) Color(FOLDER_ICON) else (fileAccent(name) ?: Color(FILE_ICON))
         )
     }
