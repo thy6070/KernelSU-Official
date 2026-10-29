@@ -29,7 +29,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || 'main' }}
-        with:
           submodules: 'recursive'
 
       - uses: actions/setup-java@v4
@@ -56,11 +55,7 @@ jobs:
           export KEY_PASSWORD="$(cat .github/brand/pass.txt)"
           cd manager
           chmod +x gradlew
-          ./gradlew :app:assembleRelease -x lint \
-            -PKEYSTORE_FILE="$KEYSTORE_FILE" \
-            -PKEYSTORE_PASSWORD="$KEYSTORE_PASSWORD" \
-            -PKEY_ALIAS="$KEY_ALIAS" \
-            -PKEY_PASSWORD="$KEY_PASSWORD"
+          ./gradlew :app:assembleRelease -x lint
 
       - name: Download ksud
         uses: actions/download-artifact@v8
@@ -94,7 +89,7 @@ jobs:
         with:
           tag_name: xy-latest
           name: 小鱼儿 官方版
-          body: "官方 KernelSU + 小鱼儿 UI"
+          body: "KernelSU + 小鱼儿 UI + ksud"
           files: manager/app/build/outputs/apk/release/*.apk
           prerelease: true
 
