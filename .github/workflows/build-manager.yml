@@ -298,7 +298,7 @@ jobs:
           else
             cp -f .github/brand/signing.jks key.jks
             echo "SIGN_KEYSTORE_FILE=key.jks" >> $GITHUB_ENV
-            echo "SIGN_KEY_ALIAS=key0" >> $GITHUB_ENV
+            echo "SIGN_KEY_ALIAS=xiaoyuer" >> $GITHUB_ENV
             echo "SIGN_KEYSTORE_PASSWORD=$(cat .github/brand/pass.txt)" >> $GITHUB_ENV
             echo "SIGN_KEY_PASSWORD=$(cat .github/brand/pass.txt)" >> $GITHUB_ENV
           fi
