@@ -1,0 +1,32 @@
+name: Rebuild
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Spoof namespace
+        run: python3 .github/brand/spoof_ns.py
+
+      - name: Build
+        run: |
+          cd manager
+          chmod +x gradlew
+          ./gradlew :app:assembleRelease -x lint
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manager-apk
+          path: manager/app/build/outputs/apk/release/*.apk
