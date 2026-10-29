@@ -414,13 +414,14 @@ private fun StatusCardSimple() {
     val active = ksuVersion != 0
     val container = if (active) MaterialTheme.colorScheme.secondaryContainer
                     else MaterialTheme.colorScheme.errorContainer
-    val content = MaterialTheme.colorScheme.contentColorFor(container)
+    val onContainer = if (active) MaterialTheme.colorScheme.onSecondaryContainer
+                      else MaterialTheme.colorScheme.onErrorContainer
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, bottom = 13.dp),
         color = container,
-        contentColor = content,
+        contentColor = onContainer,
         shape = MaterialTheme.shapes.large,
         onClick = { }
     ) {
@@ -440,8 +441,8 @@ private fun StatusCardSimple() {
             colors = ListItemDefaults.colors(
                 containerColor = Color.Transparent,
                 contentColor = content,
-                leadingContentColor = content,
-                supportingContentColor = content.copy(alpha = 0.7f)
+                leadingContentColor = onContainer,
+                supportingContentColor = onContainer.copy(alpha = 0.7f)
             ),
             content = {
                 Text(
