@@ -68,6 +68,8 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Row
 
 /**
  * @author weishu
@@ -422,34 +424,31 @@ private fun StatusCardSimple() {
             .padding(start = 16.dp, end = 16.dp, bottom = 13.dp),
         color = container,
         contentColor = onContainer,
-        shape = MaterialTheme.shapes.large,
-        onClick = { }
+        shape = MaterialTheme.shapes.large
     ) {
-        ListItem(
-            leadingContent = {
-                Icon(
-                    imageVector = if (active) Icons.Rounded.CheckCircle else Icons.Rounded.Warning,
-                    contentDescription = null
-                )
-            },
-            supportingContent = {
-                Text(
-                    text = if (active) "版本 $ksuVersion" else "点击安装",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            },
-            colors = ListItemDefaults.colors(
-                containerColor = Color.Transparent,
-                contentColor = onContainer,
-                leadingContentColor = onContainer,
-                supportingContentColor = onContainer.copy(alpha = 0.7f)
-            ),
-            content = {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = if (active) Icons.Rounded.CheckCircle else Icons.Rounded.Warning,
+                contentDescription = null,
+                modifier = Modifier.padding(end = 14.dp)
+            )
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = if (active) "工作中" else "未安装",
-                    style = MaterialTheme.typography.titleMediumEmphasized
+                    style = MaterialTheme.typography.titleMedium,
+                    color = onContainer
+                )
+                Text(
+                    text = if (active) "版本 $ksuVersion" else "点击安装",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = onContainer.copy(alpha = 0.72f)
                 )
             }
-        )
+        }
     }
 }
