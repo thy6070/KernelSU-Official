@@ -184,12 +184,12 @@ fun CardLoginScreen(onSuccess: () -> Unit) {
                     .background(Color(0x40FFFFFF))
             )
             Spacer(modifier = Modifier.height(24.dp))
-            Box(modifier = Modifier.height(16.dp).offset(y = 22.dp), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.height(16.dp).offset(y = 30.dp), contentAlignment = Alignment.Center) {
                 Text(text = error ?: "", color = Color(0xFFFF453A), fontSize = 11.sp)
             }
             Spacer(modifier = Modifier.height(4.dp))
             Row(
-                modifier = Modifier.offset(x = 18.dp, y = (-22).dp),
+                modifier = Modifier.offset(x = 18.dp, y = (-18).dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 BasicTextField(
