@@ -94,6 +94,7 @@ fun SettingPagerMaterial(
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .verticalScroll(rememberScrollState())
         ) {
+            StatusCardSimple()
             KsuIsValid {
                 SegmentedColumn(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 13.dp),
@@ -396,4 +397,50 @@ private fun TopBar(
         windowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
         scrollBehavior = scrollBehavior
     )
+}
+
+
+@Composable
+private fun StatusCardSimple() {
+    val ksuVersion = me.weishu.kernelsu.Natives.version
+    val active = ksuVersion != 0
+    val container = if (active) MaterialTheme.colorScheme.secondaryContainer
+                    else MaterialTheme.colorScheme.errorContainer
+    val content = MaterialTheme.colorScheme.contentColorFor(container)
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, bottom = 13.dp),
+        color = container,
+        contentColor = content,
+        shape = MaterialTheme.shapes.large,
+        onClick = { }
+    ) {
+        ListItem(
+            leadingContent = {
+                Icon(
+                    imageVector = if (active) Icons.Rounded.CheckCircle else Icons.Rounded.Warning,
+                    contentDescription = null
+                )
+            },
+            supportingContent = {
+                Text(
+                    text = if (active) "版本 $ksuVersion" else "点击安装",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            colors = ListItemDefaults.colors(
+                containerColor = Color.Transparent,
+                contentColor = content,
+                leadingContentColor = content,
+                supportingContentColor = content.copy(alpha = 0.7f)
+            ),
+            content = {
+                Text(
+                    text = if (active) "工作中" else "未安装",
+                    style = MaterialTheme.typography.titleMediumEmphasized
+                )
+            }
+        )
+    }
 }
