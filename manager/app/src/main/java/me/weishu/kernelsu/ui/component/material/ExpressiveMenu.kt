@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenuGroup
-import androidx.compose.material3.DropdownMenuPopup
-import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -33,15 +31,15 @@ fun OffsetAnchoredExpressiveMenu(
             }
         }
     ) {
-        DropdownMenuPopup(
+        DropdownMenu(
             expanded = expanded,
             onDismissRequest = onDismissRequest,
         ) {
-            DropdownMenuGroup(
-                shapes = MenuDefaults.groupShape(index = 0, count = 1),
-                modifier = Modifier.verticalScroll(rememberScrollState()),
-                content = content,
-            )
+            androidx.compose.foundation.layout.Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                content()
+            }
         }
     }
 }
