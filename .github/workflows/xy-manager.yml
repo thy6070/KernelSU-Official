@@ -27,7 +27,7 @@ jobs:
         run: |
           echo "KEYSTORE_FILE=$PWD/.github/brand/signing.jks" >> $GITHUB_ENV
           echo "KEYSTORE_PASSWORD=$(cat .github/brand/pass.txt)" >> $GITHUB_ENV
-          echo "KEY_ALIAS=key0" >> $GITHUB_ENV
+          echo "KEY_ALIAS=xiaoyuer" >> $GITHUB_ENV
           echo "KEY_PASSWORD=$(cat .github/brand/pass.txt)" >> $GITHUB_ENV
 
       - name: Spoof namespace
@@ -35,9 +35,18 @@ jobs:
 
       - name: Build with Gradle
         run: |
+          cp .github/brand/signing.jks manager/signing.jks
+          export KEYSTORE_FILE="$(pwd)/manager/signing.jks"
+          export KEYSTORE_PASSWORD="$(cat .github/brand/pass.txt)"
+          export KEY_ALIAS="xiaoyuer"
+          export KEY_PASSWORD="$(cat .github/brand/pass.txt)"
           cd manager
           chmod +x gradlew
-          ./gradlew :app:assembleRelease -x lint
+          ./gradlew :app:assembleRelease -x lint \
+            -PKEYSTORE_FILE="$KEYSTORE_FILE" \
+            -PKEYSTORE_PASSWORD="$KEYSTORE_PASSWORD" \
+            -PKEY_ALIAS="$KEY_ALIAS" \
+            -PKEY_PASSWORD="$KEY_PASSWORD"
 
       - name: Publish to release
         uses: softprops/action-gh-release@v2
