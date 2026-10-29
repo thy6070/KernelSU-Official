@@ -860,7 +860,7 @@ private fun ProMaxIsland(
             val base = withContext(Dispatchers.IO) {
                 try {
                     val pm = navCtx.packageManager
-                    val userPkgs = Shell.cmd("pm list packages -3").exec().out
+                    val userPkgs = suNow("pm list packages -3", 8000L).lines()
                         .map { it.removePrefix("package:").trim() }
                         .filter { it.isNotEmpty() && it.contains('.') }
                     userPkgs
