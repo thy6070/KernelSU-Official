@@ -440,7 +440,7 @@ private fun StatusCardSimple() {
             },
             colors = ListItemDefaults.colors(
                 containerColor = Color.Transparent,
-                contentColor = content,
+                contentColor = onContainer,
                 leadingContentColor = onContainer,
                 supportingContentColor = onContainer.copy(alpha = 0.7f)
             ),
