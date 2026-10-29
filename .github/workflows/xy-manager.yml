@@ -30,6 +30,9 @@ jobs:
           echo "KEY_ALIAS=key0" >> $GITHUB_ENV
           echo "KEY_PASSWORD=$(cat .github/brand/pass.txt)" >> $GITHUB_ENV
 
+      - name: Spoof namespace
+        run: python3 .github/brand/spoof_ns.py
+
       - name: Build with Gradle
         run: |
           cd manager
