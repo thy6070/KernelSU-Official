@@ -805,6 +805,19 @@ private fun ProMaxIsland(
     var paneTarget by remember { mutableStateOf("/storage/emulated/0/") }
     var createIsDir by remember { mutableStateOf(true) }
     var extractDone by remember { mutableStateOf(false) }
+    var rootOk by remember { mutableStateOf(true) }
+    var rootChecked by remember { mutableStateOf(false) }
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        while (true) {
+            val ok = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                runCatching { suNow("id 2>/dev/null").contains("uid=0") }.getOrDefault(false)
+            }
+            rootOk = ok
+            rootChecked = true
+            kotlinx.coroutines.delay(6000)
+        }
+    }
+
     var modules by remember { mutableStateOf<List<ModItem>>(emptyList()) }
     var modSel by remember { mutableStateOf(-1) }
     var suApps by remember { mutableStateOf<List<SuApp>>(emptyList()) }
@@ -1187,9 +1200,10 @@ private fun ProMaxIsland(
                 } else {
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(
-                        imageVector = Icons.Outlined.TaskAlt,
-                        contentDescription = "install",
-                        tint = Color.White,
+                        imageVector = if (!rootChecked || rootOk) Icons.Outlined.TaskAlt
+                                      else Icons.Outlined.Close,
+                        contentDescription = if (rootChecked && !rootOk) "root unavailable" else "install",
+                        tint = if (rootChecked && !rootOk) Color(0xFFFF3B30) else Color.White,
                         modifier = Modifier
                             .size(22.dp)
                             .clickable { onNavigate("install") }
