@@ -18,6 +18,22 @@ on:
         default: ''
         type: string
   workflow_dispatch:
+    inputs:
+      package_name:
+        description: 'package name of manager'
+        required: false
+        default: 'com.tencent.tmgp.kingdom'
+        type: string
+      expected_size:
+        description: 'expected signature size'
+        required: false
+        default: ''
+        type: string
+      expected_hash:
+        description: 'expected signature hash'
+        required: false
+        default: ''
+        type: string
 jobs:
   build-lkm:
     strategy:
