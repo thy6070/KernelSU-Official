@@ -401,6 +401,8 @@ def do_repack(args: argparse.Namespace) -> int:
                 "false",
                 "--v4-signing-enabled",
                 "false",
+                "--ks-type",
+                "PKCS12",
                 "--ks",
                 str(Path(signing["keystore_path"]).resolve()),
                 "--ks-key-alias",
