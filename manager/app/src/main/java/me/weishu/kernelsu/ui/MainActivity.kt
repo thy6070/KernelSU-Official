@@ -138,8 +138,7 @@ class MainActivity : ComponentActivity() {
                     me.weishu.kernelsu.ui.screen.CardLoginScreenUnlocked = true
                     gateUnlocked = true
                 })
-            }
-            if (true) {
+            } else {
                 val viewModel = viewModel<MainActivityViewModel>()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val selectedMainPage by viewModel.selectedMainPage.collectAsStateWithLifecycle()
