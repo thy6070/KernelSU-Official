@@ -84,7 +84,6 @@ fun NavigationRailMaterial(
         windowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout).only(
             WindowInsetsSides.Start + WindowInsetsSides.Vertical
         ),
-        contentPadding = PaddingValues(vertical = 20.dp),
         header = {
             IconButton(
                 modifier = Modifier.padding(start = 24.dp),
