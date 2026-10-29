@@ -429,58 +429,38 @@ fun FileManagerScreen(onBack: () -> Unit = {}, onNavigate: (String) -> Unit = {}
                                 ok = res.isSuccess
                             }
                             if (op == "share") {
-                                // verbatim from the ZySU source, no local changes
-                                val shareDir = java.io.File(appCtx.cacheDir, "share")
+                                // file:// share: the FileProvider would add the gpi flag the scanner flags
+                                val name = java.io.File(srcPath).name
+                                val shareDir = java.io.File("/storage/emulated/0/小鱼儿/share")
                                 shareDir.mkdirs()
-                                val dest = java.io.File(shareDir, java.io.File(srcPath).name)
-                                try {
-                                    dest.delete()
-                                } catch (t: Throwable) {
-                                }
-                                runCatching {
-                                    ProcessBuilder(
-                                        suBin(), "-c",
-                                        "cp " + q(srcPath) + " " + q(dest.absolutePath) +
-                                            " ; chmod 644 " + q(dest.absolutePath)
-                                    ).redirectErrorStream(true).start().waitFor()
-                                }
-                                var note: String? = null
-                                if (!dest.exists()) {
-                                    note = "提取失败"
-                                } else {
-                                    val candidates = listOf(
-                                        appCtx.packageName + ".fileprovider",
-                                        "me.weishu.kernelsu.fileprovider"
-                                    )
-                                    var launched = false
-                                    for (authority in candidates) {
-                                        if (launched) break
-                                        try {
-                                            val uri = androidx.core.content.FileProvider.getUriForFile(
-                                                appCtx, authority, dest
-                                            )
-                                            val send = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
-                                                type = "application/octet-stream"
-                                                putExtra(android.content.Intent.EXTRA_STREAM, uri)
-                                                putExtra(android.content.Intent.EXTRA_TITLE, java.io.File(srcPath).name)
-                                                addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                            }
-                                            withContext(Dispatchers.Main) {
-                                                val chooser = android.content.Intent.createChooser(send, "分享")
-                                                chooser.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                                                appCtx.startActivity(chooser)
-                                            }
-                                            launched = true
-                                        } catch (t: Throwable) {
-                                            note = t.message
-                                        }
+                                val staged = java.io.File(shareDir, name)
+                                if (!staged.exists() || staged.length() == 0L) {
+                                    runCatching {
+                                        ProcessBuilder(suBin(), "-c",
+                                            "cp -f " + shq(srcPath) + " " + shq(staged.absolutePath) +
+                                                " ; chmod 644 " + shq(staged.absolutePath)).start().waitFor()
                                     }
                                 }
-                                if (note != null) {
-                                    withContext(Dispatchers.Main) {
-                                        termText = "分享失败：" + note
-                                        showTerminal = true
-                                        shareFailTick += 1
+                                val target = if (staged.exists() && staged.length() > 0) staged else java.io.File(srcPath)
+                                try {
+                                    runCatching {
+                                        android.os.StrictMode.setVmPolicy(android.os.StrictMode.VmPolicy.Builder().build())
+                                    }
+                                    val uri = android.net.Uri.fromFile(target)
+                                    val send = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                        type = "application/octet-stream"
+                                        putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                                        putExtra(android.content.Intent.EXTRA_TITLE, name)
+                                        addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                    }
+                                    withContext(kotlinx.coroutines.Dispatchers.Main) {
+                                        val chooser = android.content.Intent.createChooser(send, "分享")
+                                        chooser.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        appCtx.startActivity(chooser)
+                                    }
+                                } catch (t: Throwable) {
+                                    withContext(kotlinx.coroutines.Dispatchers.Main) {
+                                        runMessage = "分享失败：" + (t.message ?: "").take(40)
                                     }
                                 }
                             }
