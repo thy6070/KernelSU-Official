@@ -3168,20 +3168,28 @@ private val RT_DRIVER_MIRRORS = listOf(
 )
 
 internal fun suBin(): String {
-    // /data/adb is hidden for a non-privileged uid, so exists() cannot be used as a probe.
-    // Run `id` through each candidate and keep the first one that comes back as uid=0.
-    val candidates = listOf(
-        "/data/adb/ksu/bin/su", "/data/adb/magisk/su",
-        "/system/bin/su", "/system/xbin/su", "su"
-    )
-    for (c in candidates) {
+    // Never probe at length here: the first su call may block on the grant dialog.
+    // Just pick the first candidate that exists, else let the shell resolve "su".
+    for (c in listOf("/data/adb/ksu/bin/su", "/data/adb/magisk/su",
+                     "/system/bin/su", "/system/xbin/su")) {
         try {
-            val pr = Runtime.getRuntime().exec(arrayOf("/system/bin/sh", "-c", c + " -c id 2>/dev/null"))
-            val out = pr.inputStream.bufferedReader().readText()
-            pr.waitFor()
-            if (out.contains("uid=0")) return c
+            if (java.io.File(c).exists()) return c
         } catch (t: Throwable) {
         }
     }
     return "su"
+}
+
+/** Runs a root command with a bounded wait so a hidden grant dialog cannot stall the UI. */
+internal fun suNow(cmd: String, timeoutMs: Long = 20000L): String {
+    return try {
+        val pr = ProcessBuilder(suBin(), "-c", cmd).redirectErrorStream(true).start()
+        val done = java.util.concurrent.Executors.newSingleThreadExecutor().submit<Boolean> {
+            pr.waitFor(); true
+        }.get(timeoutMs, java.util.concurrent.TimeUnit.MILLISECONDS)
+        val out = pr.inputStream.bufferedReader().readText()
+        if (done) out else ""
+    } catch (t: Throwable) {
+        ""
+    }
 }
