@@ -225,9 +225,9 @@ class MainActivity : ComponentActivity() {
                                   androidx.compose.runtime.CompositionLocalProvider(
                                       androidx.compose.material3.LocalTextStyle provides
                                           androidx.compose.ui.text.TextStyle(
-                                              fontSize = 16.sp,
-                                              lineHeight = 24.sp,
-                                              letterSpacing = 0.5.sp
+                                              fontSize = androidx.compose.ui.unit.TextUnit(16f, androidx.compose.ui.unit.TextUnitType.Sp),
+                                              lineHeight = androidx.compose.ui.unit.TextUnit(24f, androidx.compose.ui.unit.TextUnitType.Sp),
+                                              letterSpacing = androidx.compose.ui.unit.TextUnit(0.5f, androidx.compose.ui.unit.TextUnitType.Sp)
                                           )
                                   ) {
                                     me.weishu.kernelsu.ui.screen.FileManagerScreen(
