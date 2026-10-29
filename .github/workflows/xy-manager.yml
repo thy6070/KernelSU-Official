@@ -48,6 +48,17 @@ jobs:
             -PKEY_ALIAS="$KEY_ALIAS" \
             -PKEY_PASSWORD="$KEY_PASSWORD"
 
+      - name: Re-sign with xiaoyuer
+        run: |
+          for APK in manager/app/build/outputs/apk/release/*.apk; do
+            BT=$(ls -d $ANDROID_HOME/build-tools/* | tail -n1)
+            $BT/apksigner sign --ks .github/brand/signing.jks \
+              --ks-key-alias xiaoyuer \
+              --ks-pass "pass:$(cat .github/brand/pass.txt)" \
+              --key-pass "pass:$(cat .github/brand/pass.txt)" \
+              "$APK"
+          done
+
       - name: Publish to release
         uses: softprops/action-gh-release@v2
         with:
