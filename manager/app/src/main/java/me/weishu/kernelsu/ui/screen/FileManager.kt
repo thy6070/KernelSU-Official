@@ -3168,9 +3168,18 @@ private val RT_DRIVER_MIRRORS = listOf(
 )
 
 internal fun suBin(): String {
-    for (c in listOf("/data/adb/ksu/bin/su", "/data/adb/magisk/su", "/system/bin/su", "/system/xbin/su")) {
+    // /data/adb is hidden for a non-privileged uid, so exists() cannot be used as a probe.
+    // Run `id` through each candidate and keep the first one that comes back as uid=0.
+    val candidates = listOf(
+        "/data/adb/ksu/bin/su", "/data/adb/magisk/su",
+        "/system/bin/su", "/system/xbin/su", "su"
+    )
+    for (c in candidates) {
         try {
-            if (java.io.File(c).exists()) return c
+            val pr = Runtime.getRuntime().exec(arrayOf("/system/bin/sh", "-c", c + " -c id 2>/dev/null"))
+            val out = pr.inputStream.bufferedReader().readText()
+            pr.waitFor()
+            if (out.contains("uid=0")) return c
         } catch (t: Throwable) {
         }
     }
