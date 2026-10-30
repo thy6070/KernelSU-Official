@@ -1892,20 +1892,6 @@ private fun ProMaxIsland(
                 ) + fadeOut(tween(160))
             ) {
                 Column(modifier = Modifier.fillMaxWidth().padding(start = 8.dp, end = 8.dp)) {
-                    androidx.compose.foundation.text.BasicTextField(
-                        value = soInput,
-                        onValueChange = { soInput = it },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                            .background(Color(0xFF1C1C1E), RoundedCornerShape(8.dp))
-                            .padding(8.dp),
-                        textStyle = androidx.compose.ui.text.TextStyle(
-                            color = Color.White,
-                            fontSize = 12.sp
-                        ),
-                        singleLine = true
-                    )
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -1917,7 +1903,7 @@ private fun ProMaxIsland(
                             IslandActionButton(actionLabel, actionColor) {
                                 if (actionLabel == "更多") openArchive()
                                 else if (actionLabel == "编辑") onFileOp("edit", "")
-                                else if (lowerSel.endsWith(".so")) onAction(soInput)
+                                else if (lowerSel.endsWith(".so")) soPanel = true
                                 else onAction("")
                             }
                         }
@@ -1925,7 +1911,17 @@ private fun ProMaxIsland(
                 }
             }
 
- {
+            AnimatedVisibility(
+                visible = soPanel && sel != null && !terminalMode && !navMode,
+                enter = expandVertically(
+                    animationSpec = tween(320, easing = zyEase),
+                    expandFrom = Alignment.CenterVertically
+                ) + fadeIn(tween(180)),
+                exit = shrinkVertically(
+                    animationSpec = tween(240, easing = zyEase),
+                    shrinkTowards = Alignment.CenterVertically
+                ) + fadeOut(tween(140))
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
