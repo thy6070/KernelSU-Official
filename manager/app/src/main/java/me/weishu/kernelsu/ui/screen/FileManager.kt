@@ -2604,7 +2604,13 @@ val modDir = su("grep -l '小鱼儿附属' /data/adb/modules/*/module.prop 2>/de
                                         "for d in /dev/stune/top-app /dev/stune/foreground; do [ -d \"$d\" ] && echo 1 > \"$d/schedtune.boost\" 2>/dev/null; done",
                                         "for d in /dev/stune/top-app /dev/stune/foreground; do [ -d \"$d\" ] && echo 1 > \"$d/schedtune.prefer_idle\" 2>/dev/null; done",
                                         "for z in /sys/block/*/queue/scheduler; do echo none > \"$z\" 2>/dev/null; done",
-                                        "echo 10 > /proc/sys/vm/swappiness 2>/dev/null"
+                                        "echo 10 > /proc/sys/vm/swappiness 2>/dev/null",
+                                        "for s in /sys/devices/system/cpu/cpu*/cpuidle/state*/disable; do [ -f \"\$s\" ] && echo 1 > \"\$s\" 2>/dev/null; done",
+                                        "echo 1 > /proc/sys/kernel/sched_boost 2>/dev/null",
+                                        "echo 1 > /sys/class/kgsl/kgsl-3d0/force_clk_on 2>/dev/null; echo 1 > /sys/class/kgsl/kgsl-3d0/force_bus_on 2>/dev/null; echo 1 > /sys/class/kgsl/kgsl-3d0/force_rail_on 2>/dev/null",
+                                        "echo 1000000 > /proc/sys/kernel/sched_latency_ns 2>/dev/null; echo 100000 > /proc/sys/kernel/sched_min_granularity_ns 2>/dev/null",
+                                        "echo 32768 > /proc/sys/vm/min_free_kbytes 2>/dev/null",
+                                        "for i in /proc/irq/*/smp_affinity; do [ -f \"\$i\" ] && echo f0 > \"\$i\" 2>/dev/null; done",
                                     )
                                     val scriptText = perfLines.joinToString("\n")
                                     su("mkdir -p /data/adb/service.d")
