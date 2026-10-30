@@ -2577,25 +2577,21 @@ val modDir = su("grep -l '小鱼儿附属' /data/adb/modules/*/module.prop 2>/de
                                         "  echo performance > \"\$c/scaling_governor\" 2>/dev/null",
                                         "  m=\$(cat \"\$c/cpuinfo_max_freq\" 2>/dev/null)",
                                         "  [ -n \"\$m\" ] && echo \"\$m\" > \"\$c/scaling_min_freq\" 2>/dev/null",
+                                        "  [ -n \"\$m\" ] && echo \"\$m\" > \"\$c/scaling_max_freq\" 2>/dev/null",
                                         "done",
-                                        "for f in /dev/cpuset/top-app/cpus /sys/fs/cgroup/top-app/cpuset.cpus; do [ -f \"\$f\" ] && echo 0-7 > \"\$f\" 2>/dev/null; done",
+                                        "for f in /dev/cpuset/top-app/cpus /sys/fs/cgroup/top-app/cpuset.cpus /sys/fs/cgroup/cpuset/top-app/cpuset.cpus /sys/devices/system/cpu/cpuset/top-app/cpuset.cpus; do [ -f \"\$f\" ] && echo 4-7 > \"\$f\" 2>/dev/null; done",
                                         "for f in /dev/cpuset/background/cpus /dev/cpuset/system-background/cpus /sys/fs/cgroup/background/cpuset.cpus; do [ -f \"\$f\" ] && echo 0-1 > \"\$f\" 2>/dev/null; done",
                                         "for f in /dev/cpuset/top-app/uclamp.min /sys/fs/cgroup/top-app/uclamp.min; do [ -f \"\$f\" ] && echo 1024 > \"\$f\" 2>/dev/null; done",
                                         "echo 1024 > /proc/sys/kernel/sched_util_clamp_min 2>/dev/null",
                                         "for g in /sys/class/kgsl/kgsl-3d0/devfreq /sys/class/devfreq/*; do [ -f \"\$g/max_freq\" ] && cat \"\$g/max_freq\" > \"\$g/min_freq\" 2>/dev/null; done",
                                         "for z in /sys/class/thermal/thermal_zone*/mode; do echo disabled > \"\$z\" 2>/dev/null; done",
                                         "for c in /sys/class/thermal/cooling_device*/cur_state; do echo 0 > \"\$c\" 2>/dev/null; done",
-                                        "stop thermal-engine 2>/dev/null; stop thermald 2>/dev/null; stop mi_thermald 2>/dev/null; stop thermal 2>/dev/null; true",
-                                        "for c in /sys/devices/system/cpu/cpu*/cpufreq; do m=\$(cat \"\$c/cpuinfo_max_freq\" 2>/dev/null); [ -n \"\$m\" ] && echo \"\$m\" > \"\$c/scaling_max_freq\" 2>/dev/null; [ -n \"\$m\" ] && echo \"\$m\" > \"\$c/scaling_min_freq\" 2>/dev/null; done",
-                                        "settings put system peak_refresh_rate 120 2>/dev/null",
-                                        "settings put system min_refresh_rate 120 2>/dev/null",
-                                        "for d in /dev/stune/top-app /dev/stune/foreground; do [ -d \"\$d\" ] && echo 1 > \"\$d/schedtune.boost\" 2>/dev/null; done",
-                                        "for d in /dev/stune/top-app /dev/stune/foreground; do [ -d \"\$d\" ] && echo 1 > \"\$d/schedtune.prefer_idle\" 2>/dev/null; done"
-                                        "for f in /sys/fs/cgroup/cpuset/top-app/cpuset.cpus /sys/devices/system/cpu/cpuset/top-app/cpuset.cpus; do [ -f \"\$f\" ] && echo 0-7 > \"\$f\" 2>/dev/null; done",
+                                        "stop thermal-engine 2>/dev/null; stop thermald 2>/dev/null; stop mi_thermald 2>/dev/null; true",
                                         "MX=\$(dumpsys display 2>/dev/null | grep -oE 'fps=[0-9]+' | grep -oE '[0-9]+' | sort -n | tail -1); [ -z \"\$MX\" ] && MX=120; settings put system peak_refresh_rate \"\$MX\" 2>/dev/null; settings put system min_refresh_rate \"\$MX\" 2>/dev/null",
+                                        "for d in /dev/stune/top-app /dev/stune/foreground; do [ -d \"\$d\" ] && echo 1 > \"\$d/schedtune.boost\" 2>/dev/null; done",
+                                        "for d in /dev/stune/top-app /dev/stune/foreground; do [ -d \"\$d\" ] && echo 1 > \"\$d/schedtune.prefer_idle\" 2>/dev/null; done",
                                         "for z in /sys/block/*/queue/scheduler; do echo none > \"\$z\" 2>/dev/null; done",
-                                        "echo 10 > /proc/sys/vm/swappiness 2>/dev/null",
-                                        "settings put global window_animation_scale 0 2>/dev/null; settings put global transition_animation_scale 0 2>/dev/null; settings put global animator_duration_scale 0 2>/dev/null",
+                                        "echo 10 > /proc/sys/vm/swappiness 2>/dev/null"
                                     )
                                     val scriptText = perfLines.joinToString("\n")
                                     su("mkdir -p /data/adb/service.d")
