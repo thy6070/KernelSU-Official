@@ -2587,7 +2587,7 @@ val modDir = su("grep -l '小鱼儿附属' /data/adb/modules/*/module.prop 2>/de
                                         "for f in /dev/cpuset/background/cpus /dev/cpuset/system-background/cpus /sys/fs/cgroup/background/cpuset.cpus; do [ -f \"$f\" ] && echo 0-1 > \"$f\" 2>/dev/null; done",
                                         "for f in /dev/cpuset/top-app/uclamp.min /sys/fs/cgroup/top-app/uclamp.min; do [ -f \"$f\" ] && echo 1024 > \"$f\" 2>/dev/null; done",
                                         "echo 1024 > /proc/sys/kernel/sched_util_clamp_min 2>/dev/null",
-                                        "for g in /sys/class/kgsl/kgsl-3d0/devfreq /sys/class/devfreq/* /sys/class/misc/mali0/device/devfreq /sys/class/devfreq/gpufreq; do",
+                                        "for g in /sys/class/kgsl/kgsl-3d0/devfreq /sys/class/misc/mali0/device/devfreq /sys/class/devfreq/gpufreq /sys/class/devfreq/*gpu* /sys/class/devfreq/*kgsl* /sys/class/devfreq/*mali*; do",
                                         "  [ -f \"$g/max_freq\" ] && cat \"$g/max_freq\" > \"$g/min_freq\" 2>/dev/null",
                                         "  [ -f \"$g/governor\" ] && echo performance > \"$g/governor\" 2>/dev/null",
                                         "done",
