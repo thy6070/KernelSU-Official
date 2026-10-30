@@ -33,7 +33,14 @@ class SuperUserRepositoryImpl : SuperUserRepository {
 
     override suspend fun getAppList(): Result<Pair<List<AppInfo>, List<Int>>> = withContext(Dispatchers.IO) {
         runCatching {
-            if (!KsuCli.SHELL.isRoot) {
+            // libsu shell may be uninitialized inside the manager; fall back to the native check
+            val rootOk = try {
+                if (KsuCli.SHELL.isRoot) true
+                else suRootProbe()
+            } catch (t: Throwable) {
+                suRootProbe()
+            }
+            if (!rootOk) {
                 return@withContext Result.failure(
                     IllegalStateException("Root access is required")
                 )
@@ -163,5 +170,20 @@ class SuperUserRepositoryImpl : SuperUserRepository {
             val shell = KsuCli.SHELL
             task?.let { shell.execTask(it) }
         }
+    }
+}
+
+private fun suRootProbe(): Boolean {
+    return try {
+        val bin = listOf(
+            "/data/adb/ksu/bin/su", "/data/adb/magisk/su",
+            "/system/bin/su", "/system/xbin/su", "su"
+        ).firstOrNull { it == "su" || java.io.File(it).exists() } ?: "su"
+        val pr = ProcessBuilder(bin, "-c", "id").redirectErrorStream(true).start()
+        val ok = pr.waitFor()
+        val out = pr.inputStream.bufferedReader().readText()
+        ok == 0 && out.contains("uid=0")
+    } catch (t: Throwable) {
+        false
     }
 }
