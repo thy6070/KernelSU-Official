@@ -22,8 +22,11 @@ jobs:
     with:
       target: aarch64-linux-android
 
+  build-ksuinit:
+    uses: ./.github/workflows/ksuinit.yml
+
   build:
-    needs: build-ksud
+    needs: [build-ksud, build-ksuinit]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -72,6 +75,21 @@ jobs:
           mkdir -p inject/lib/arm64-v8a
           cp -f "$KSUD" inject/lib/arm64-v8a/libksud.so
           cd inject && zip -q -r "../$APK" lib && cd ..
+
+      - name: Download ksuinit
+        uses: actions/download-artifact@v8
+        with:
+          name: ksuinit-aarch64
+          path: ksuinit-out
+
+      - name: Inject ksuinit
+        run: |
+          KINIT=$(find ksuinit-out -type f -name ksuinit | head -n1)
+          test -n "$KINIT"
+          APK=$(find manager/app/build/outputs/apk/release -name "*.apk" | head -n1)
+          mkdir -p kinit_inject/assets
+          cp -f "$KINIT" kinit_inject/assets/ksuinit
+          cd kinit_inject && zip -q -r "../$APK" assets && cd ..
 
       - name: Re-sign with xiaoyuer
         run: |
