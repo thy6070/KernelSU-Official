@@ -887,7 +887,7 @@ private fun ProMaxIsland(
         }
     }
     var soInput by remember { mutableStateOf("") }
-    var soPanel by remember { mutableStateOf(true) }
+    var soPanel by remember { mutableStateOf(false) }
     LaunchedEffect(selectedFile) {
         if (selectedFile != null) navMode = false
         soPanel = false
@@ -1881,18 +1881,7 @@ private fun ProMaxIsland(
             }
 
             AnimatedVisibility(
-                visible = !terminalMode && !navMode,
-                enter = expandVertically(
-                    animationSpec = tween(320, easing = zyEase),
-                    expandFrom = Alignment.CenterVertically
-                ) + fadeIn(tween(180)),
-                exit = shrinkVertically(
-                    animationSpec = tween(240, easing = zyEase),
-                    shrinkTowards = Alignment.CenterVertically
-                ) + fadeOut(tween(140))
-            )
-            AnimatedVisibility(
-                visible = !terminalMode && !navMode,
+                visible = sel != null && !terminalMode && !navMode && !soPanel,
                 enter = expandVertically(
                     animationSpec = tween(360, easing = zyEase),
                     expandFrom = Alignment.CenterVertically
@@ -1922,7 +1911,17 @@ private fun ProMaxIsland(
                 }
             }
 
- {
+            AnimatedVisibility(
+                visible = soPanel && sel != null && !terminalMode && !navMode,
+                enter = expandVertically(
+                    animationSpec = tween(320, easing = zyEase),
+                    expandFrom = Alignment.CenterVertically
+                ) + fadeIn(tween(180)),
+                exit = shrinkVertically(
+                    animationSpec = tween(240, easing = zyEase),
+                    shrinkTowards = Alignment.CenterVertically
+                ) + fadeOut(tween(140))
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
