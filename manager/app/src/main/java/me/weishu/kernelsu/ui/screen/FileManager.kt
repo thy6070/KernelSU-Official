@@ -859,47 +859,31 @@ private fun ProMaxIsland(
         if (navTarget == "su" || (navTarget == "home" && jumpStep == 7)) {
             val base = withContext(Dispatchers.IO) {
                 try {
+                    val repo = me.weishu.kernelsu.data.repository.SuperUserRepositoryImpl()
+                    val res = repo.getAppList()
+                    val apps = res.getOrNull()?.first ?: emptyList()
                     val pm = navCtx.packageManager
-                    val userPkgs = suNow("pm list packages -3", 8000L).lines()
-                        .map { it.removePrefix("package:").trim() }
-                        .filter { it.isNotEmpty() && it.contains('.') }
-                    userPkgs
-                        .mapNotNull { pkg ->
-                            try {
-                                pm.getApplicationInfo(pkg, 0)
-                            } catch (t: Throwable) {
-                                null
-                            }
+                    apps.map { ai ->
+                        val icon = try {
+                            val d = pm.getApplicationIcon(ai.packageName)
+                            val w = d.intrinsicWidth.coerceAtLeast(1)
+                            val h = d.intrinsicHeight.coerceAtLeast(1)
+                            val bmp = android.graphics.Bitmap.createBitmap(w, h, android.graphics.Bitmap.Config.ARGB_8888)
+                            val canvas = android.graphics.Canvas(bmp)
+                            d.setBounds(0, 0, w, h)
+                            d.draw(canvas)
+                            bmp
+                        } catch (t: Throwable) {
+                            null
                         }
-                        .map { ai ->
-                            val allowed = false
-                            val icon = try {
-                                val d = pm.getApplicationIcon(ai)
-                                val w = d.intrinsicWidth.coerceAtLeast(1)
-                                val h = d.intrinsicHeight.coerceAtLeast(1)
-                                val bmp = android.graphics.Bitmap.createBitmap(w, h, android.graphics.Bitmap.Config.ARGB_8888)
-                                val canvas = android.graphics.Canvas(bmp)
-                                d.setBounds(0, 0, w, h)
-                                d.draw(canvas)
-                                bmp
-                            } catch (t: Throwable) {
-                                null
-                            }
-                            SuApp(ai.packageName, pm.getApplicationLabel(ai).toString(), ai.uid, allowed, icon)
-                        }
-                        .take(200)
+                        SuApp(ai.packageName, ai.label, ai.uid, ai.profile?.allowSu == true, icon)
+                    }
                 } catch (t: Throwable) {
                     emptyList()
                 }
             }
-            suApps = base.map { a ->
-                val allowed = try {
-                    me.weishu.kernelsu.Natives.getAppProfile(a.pkg, a.uid)?.allowSu == true
-                } catch (t: Throwable) {
-                    false
-                }
-                a.copy(allowed = allowed)
-            }.sortedByDescending { it.allowed }
+            suApps = base.sortedByDescending { it.allowed }
+
         }
     }
     var soInput by remember { mutableStateOf("") }
