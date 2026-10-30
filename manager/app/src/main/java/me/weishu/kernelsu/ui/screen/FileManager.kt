@@ -821,6 +821,8 @@ private fun ProMaxIsland(
     var modules by remember { mutableStateOf<List<ModItem>>(emptyList()) }
     var modSel by remember { mutableStateOf(-1) }
     var suApps by remember { mutableStateOf<List<SuApp>>(emptyList()) }
+    val suVm = androidx.lifecycle.viewmodel.compose.viewModel<me.weishu.kernelsu.ui.viewmodel.SuperUserViewModel>()
+    val suState by suVm.uiState.collectAsStateWithLifecycle()
     var revokedPkgs by remember { mutableStateOf<Set<String>>(emptySet()) }
     var suSel by remember { mutableStateOf(-1) }
     val navCtx = LocalContext.current
@@ -857,33 +859,29 @@ private fun ProMaxIsland(
             }
         }
         if (navTarget == "su" || (navTarget == "home" && jumpStep == 7)) {
-            val base = withContext(Dispatchers.IO) {
-                try {
-                    val repo = me.weishu.kernelsu.data.repository.SuperUserRepositoryImpl()
-                    val res = repo.getAppList()
-                    val apps = res.getOrNull()?.first ?: emptyList()
-                    val pm = navCtx.packageManager
-                    apps.map { ai ->
-                        val icon = try {
-                            val d = ai.packageInfo.applicationInfo?.loadIcon(pm) ?: pm.getApplicationIcon(ai.packageName)
-                            val w = d.intrinsicWidth.coerceAtLeast(1)
-                            val h = d.intrinsicHeight.coerceAtLeast(1)
-                            val bmp = android.graphics.Bitmap.createBitmap(w, h, android.graphics.Bitmap.Config.ARGB_8888)
-                            val canvas = android.graphics.Canvas(bmp)
-                            d.setBounds(0, 0, w, h)
-                            d.draw(canvas)
-                            bmp
-                        } catch (t: Throwable) {
-                            null
-                        }
-                        SuApp(ai.packageName, ai.label, ai.uid, ai.profile?.allowSu == true, icon)
-                    }
-                } catch (t: Throwable) {
-                    emptyList()
-                }
+            LaunchedEffect(navTarget, jumpStep) {
+                suVm.fetchAppList()
             }
-            suApps = base.sortedByDescending { it.allowed }
-
+            LaunchedEffect(suState.groupedApps) {
+                val pm = navCtx.packageManager
+                val flat = suState.groupedApps.flatMap { it.apps }
+                suApps = flat.map { ai ->
+                    val icon = try {
+                        val d = ai.packageInfo.applicationInfo?.loadIcon(pm)
+                                ?: pm.getApplicationIcon(ai.packageName)
+                        val w = d.intrinsicWidth.coerceAtLeast(1)
+                        val h = d.intrinsicHeight.coerceAtLeast(1)
+                        val bmp = android.graphics.Bitmap.createBitmap(w, h, android.graphics.Bitmap.Config.ARGB_8888)
+                        val canvas = android.graphics.Canvas(bmp)
+                        d.setBounds(0, 0, w, h)
+                        d.draw(canvas)
+                        bmp
+                    } catch (t: Throwable) {
+                        null
+                    }
+                    SuApp(ai.packageName, ai.label, ai.uid, ai.profile?.allowSu == true, icon)
+                }.sortedByDescending { it.allowed }
+            }
         }
     }
     var soInput by remember { mutableStateOf("") }
