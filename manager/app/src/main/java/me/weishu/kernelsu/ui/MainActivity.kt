@@ -129,6 +129,7 @@ class MainActivity : ComponentActivity() {
 
         if (savedInstanceState == null) intent?.let { intentChannel.trySend(it) }
 
+        locateIntent(intent)
         setContent {
             var gateUnlocked by remember { mutableStateOf(me.weishu.kernelsu.ui.screen.CardLoginScreenUnlocked) }
             var gateOpenSettings by remember { mutableStateOf(false) }
