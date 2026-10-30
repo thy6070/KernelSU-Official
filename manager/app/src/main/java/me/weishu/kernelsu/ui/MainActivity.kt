@@ -143,11 +143,6 @@ class MainActivity : ComponentActivity() {
         return true
     }
 
-    override fun onNewIntent(intent: android.content.Intent) {
-        super.onNewIntent(intent)
-        locateIntent(intent)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -338,6 +333,7 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         intentChannel.trySend(intent)
+        locateIntent(intent)
     }
 }
 
