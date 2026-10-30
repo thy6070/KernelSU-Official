@@ -46,6 +46,12 @@ class SuperUserRepositoryImpl : SuperUserRepository {
                 )
             }
 
+            // force the libsu shell to come up before binding RootService
+            try {
+                com.topjohnwu.superuser.Shell.getShell()
+            } catch (t: Throwable) {
+                Log.w(TAG, "shell init failed", t)
+            }
             val result = connectKsuService {
                 Log.w(TAG, "KsuService disconnected")
             }
