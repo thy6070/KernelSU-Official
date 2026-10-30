@@ -443,8 +443,9 @@ fun FileManagerScreen(onBack: () -> Unit = {}, onNavigate: (String) -> Unit = {}
                                 }
                                 val target = if (staged.exists() && staged.length() > 0) staged else java.io.File(srcPath)
                                 runCatching {
-                                    android.os.StrictMode.setVmPolicy(android.os.StrictMode.VmPolicy.Builder().build())
-                                    val uri = android.net.Uri.fromFile(target)
+                                    val uri = androidx.core.content.FileProvider.getUriForFile(
+                                        appCtx, appCtx.packageName + ".fileprovider", target
+                                    )
                                     val send = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
                                         type = "application/octet-stream"
                                         putExtra(android.content.Intent.EXTRA_STREAM, uri)
