@@ -1883,6 +1883,17 @@ private fun ProMaxIsland(
             AnimatedVisibility(
                 visible = !terminalMode && !navMode,
                 enter = expandVertically(
+                    animationSpec = tween(320, easing = zyEase),
+                    expandFrom = Alignment.CenterVertically
+                ) + fadeIn(tween(180)),
+                exit = shrinkVertically(
+                    animationSpec = tween(240, easing = zyEase),
+                    shrinkTowards = Alignment.CenterVertically
+                ) + fadeOut(tween(140))
+            )
+            AnimatedVisibility(
+                visible = !terminalMode && !navMode,
+                enter = expandVertically(
                     animationSpec = tween(360, easing = zyEase),
                     expandFrom = Alignment.CenterVertically
                 ) + fadeIn(tween(200)),
@@ -1911,17 +1922,7 @@ private fun ProMaxIsland(
                 }
             }
 
-            AnimatedVisibility(
-                visible = !terminalMode && !navMode,
-                enter = expandVertically(
-                    animationSpec = tween(320, easing = zyEase),
-                    expandFrom = Alignment.CenterVertically
-                ) + fadeIn(tween(180)),
-                exit = shrinkVertically(
-                    animationSpec = tween(240, easing = zyEase),
-                    shrinkTowards = Alignment.CenterVertically
-                ) + fadeOut(tween(140))
-            ) {
+ {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
