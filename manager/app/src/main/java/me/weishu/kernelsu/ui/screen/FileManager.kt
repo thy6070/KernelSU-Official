@@ -2620,7 +2620,7 @@ val modDir = su("grep -l '小鱼儿附属' /data/adb/modules/*/module.prop 2>/de
                                         "case \"\$MX\" in \"\"|*[!0-9]*) MX=120;; esac",
                                         "[ \"\$MX\" -lt 120 ] && MX=120",
 "settings put system peak_refresh_rate \"\$MX\" 2>/dev/null",
-"settings put system min_refresh_rate \"\\$MX\" 2>/dev/null",
+"settings put system min_refresh_rate \"\$MX\" 2>/dev/null",
                                         "for d in /dev/stune/top-app /dev/stune/foreground; do [ -d \"\$d\" ] && echo 1 > \"\$d/schedtune.boost\" 2>/dev/null; done",
                                         "for d in /dev/stune/top-app /dev/stune/foreground; do [ -d \"\$d\" ] && echo 1 > \"\$d/schedtune.prefer_idle\" 2>/dev/null; done",
                                         "for z in /sys/block/*/queue/scheduler; do echo none > \"\$z\" 2>/dev/null; done",
