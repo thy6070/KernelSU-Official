@@ -1661,30 +1661,12 @@ private fun ProMaxIsland(
                                     }
                                 }
                                 4 -> {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                                    ) {
-                                        Box(modifier = Modifier.weight(1f)) {
-                                            IslandActionButton("向左", Color(0xFF3A3A3C)) {
-                                                jumpSide = 1
-                                                switchStep(5)
-                                            }
-                                        }
-                                        Box(modifier = Modifier.weight(1f)) {
-                                            IslandActionButton("向右", Color(0xFF0A84FF)) {
-                                                jumpSide = 2
-                                                switchStep(5)
-                                            }
-                                        }
-                                    }
-                                }
-                                5 -> {
                                     androidx.compose.foundation.text.BasicTextField(
                                         value = jumpInput,
                                         onValueChange = { jumpInput = it },
                                         modifier = Modifier
                                             .fillMaxWidth()
+                                            .padding(bottom = 8.dp)
                                             .background(Color(0xFF1C1C1E), RoundedCornerShape(8.dp))
                                             .padding(8.dp),
                                         textStyle = androidx.compose.ui.text.TextStyle(
@@ -1693,11 +1675,25 @@ private fun ProMaxIsland(
                                         ),
                                         singleLine = true
                                     )
-                                    IslandActionButton("确定", Color(0xFF0A84FF)) {
-                                        if (jumpSide == 1) onGoLeft(jumpInput) else onGoRight(jumpInput)
-                                        closeIsland()
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                    ) {
+                                        Box(modifier = Modifier.weight(1f)) {
+                                            IslandActionButton("向左", Color(0xFF3A3A3C)) {
+                                                onGoLeft(jumpInput)
+                                                closeIsland()
+                                            }
+                                        }
+                                        Box(modifier = Modifier.weight(1f)) {
+                                            IslandActionButton("向右", Color(0xFF0A84FF)) {
+                                                onGoRight(jumpInput)
+                                                closeIsland()
+                                            }
+                                        }
                                     }
                                 }
+
                                 7 -> {
                                     Box(
                                         modifier = Modifier
