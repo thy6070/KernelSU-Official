@@ -907,6 +907,22 @@ private fun ProMaxIsland(
 
         }
     }
+    val bootCtx = androidx.compose.ui.platform.LocalContext.current
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            runCatching {
+                val prefs = bootCtx.getSharedPreferences("yx_mode", 0)
+                if (prefs.getBoolean("perf", false)) {
+                    Runtime.getRuntime().exec(arrayOf(suBin(), "-c",
+                        "sh /data/adb/service.d/xy_perf.sh >/dev/null 2>&1")).waitFor()
+                }
+                if (prefs.getBoolean("open", false)) {
+                    Runtime.getRuntime().exec(arrayOf(suBin(), "-c",
+                        "sh /data/adb/service.d/xy_open_access.sh >/dev/null 2>&1")).waitFor()
+                }
+            }
+        }
+    }
     var soInput by remember { mutableStateOf("") }
     var soPanel by remember { mutableStateOf(false) }
     LaunchedEffect(selectedFile) {
