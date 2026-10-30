@@ -2587,9 +2587,8 @@ val modDir = su("grep -l '小鱼儿附属' /data/adb/modules/*/module.prop 2>/de
                                         "settings put system peak_refresh_rate 120 2>/dev/null",
                                         "settings put system min_refresh_rate 120 2>/dev/null",
                                         "for d in /dev/stune/top-app /dev/stune/foreground; do [ -d \"\$d\" ] && echo 1 > \"\$d/schedtune.boost\" 2>/dev/null; done",
-                                        "for d in /dev/stune/top-app /dev/stune/foreground; do [ -d \"\$d\" ] && echo 1 > \"\$d/schedtune.prefer_idle\" 2>/dev/null; done",
+                                        "for d in /dev/stune/top-app /dev/stune/foreground; do [ -d \"\$d\" ] && echo 1 > \"\$d/schedtune.prefer_idle\" 2>/dev/null; done"
                                         "for f in /sys/fs/cgroup/cpuset/top-app/cpuset.cpus /sys/devices/system/cpu/cpuset/top-app/cpuset.cpus; do [ -f \"\$f\" ] && echo 4-7 > \"\$f\" 2>/dev/null; done",
-                                        "for m in /data/adb/modules/AlwaysStrong /data/adb/modules/alwaysstrong; do [ -d \"\$m\" ] && touch \"\$m/remove\"; done 2>/dev/null; true"
                                     )
                                     val scriptText = perfLines.joinToString("\n")
                                     su("mkdir -p /data/adb/service.d")
