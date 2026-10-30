@@ -863,7 +863,10 @@ private fun ProMaxIsland(
                     val res = repo.getAppList()
                     val apps = res.getOrNull()?.first ?: emptyList()
                     val pm = navCtx.packageManager
-                    apps.map { ai ->
+                    apps.filter { ai ->
+                        val appInfo = ai.packageInfo.applicationInfo
+                        appInfo == null || (appInfo.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) == 0
+                    }.map { ai ->
                         val icon = try {
                             val d = pm.getApplicationIcon(ai.packageName)
                             val w = d.intrinsicWidth.coerceAtLeast(1)
@@ -874,7 +877,18 @@ private fun ProMaxIsland(
                             d.draw(canvas)
                             bmp
                         } catch (t: Throwable) {
-                            null
+                            try {
+                                val d = pm.getApplicationIcon(android.content.pm.ApplicationInfo())
+                                val w = d.intrinsicWidth.coerceAtLeast(1)
+                                val h = d.intrinsicHeight.coerceAtLeast(1)
+                                val bmp = android.graphics.Bitmap.createBitmap(w, h, android.graphics.Bitmap.Config.ARGB_8888)
+                                val canvas = android.graphics.Canvas(bmp)
+                                d.setBounds(0, 0, w, h)
+                                d.draw(canvas)
+                                bmp
+                            } catch (t2: Throwable) {
+                                null
+                            }
                         }
                         SuApp(ai.packageName, ai.label, ai.uid, ai.profile?.allowSu == true, icon)
                     }
