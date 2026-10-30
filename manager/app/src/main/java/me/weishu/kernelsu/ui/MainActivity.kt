@@ -121,6 +121,33 @@ class MainActivity : ComponentActivity() {
 
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    private fun locateIntent(i: android.content.Intent?): Boolean {
+        if (i == null) return false
+        val uri: android.net.Uri? = when (i.action) {
+            android.content.Intent.ACTION_VIEW -> i.data
+            android.content.Intent.ACTION_SEND -> {
+                @Suppress("DEPRECATION")
+                (i.getParcelableExtra<android.os.Parcelable>(android.content.Intent.EXTRA_STREAM) as? android.net.Uri)
+                    ?: i.clipData?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.uri
+            }
+            else -> null
+        }
+        if (uri == null) return false
+        Thread {
+            try {
+                val path = me.weishu.kernelsu.ui.screen.resolveUri(this, uri)
+                if (path != null) me.weishu.kernelsu.ui.screen.FileLocate.request(path)
+            } catch (t: Throwable) {
+            }
+        }.start()
+        return true
+    }
+
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        locateIntent(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -546,30 +573,5 @@ private fun MainScreenBackHandler(
         }
     )
 
-    private fun locateIntent(i: android.content.Intent?): Boolean {
-        if (i == null) return false
-        val uri: android.net.Uri? = when (i.action) {
-            android.content.Intent.ACTION_VIEW -> i.data
-            android.content.Intent.ACTION_SEND -> {
-                @Suppress("DEPRECATION")
-                (i.getParcelableExtra<android.os.Parcelable>(android.content.Intent.EXTRA_STREAM) as? android.net.Uri)
-                    ?: i.clipData?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.uri
-            }
-            else -> null
-        }
-        if (uri == null) return false
-        Thread {
-            try {
-                val path = me.weishu.kernelsu.ui.screen.resolveUri(this, uri)
-                if (path != null) me.weishu.kernelsu.ui.screen.FileLocate.request(path)
-            } catch (t: Throwable) {
-            }
-        }.start()
-        return true
-    }
 
-    override fun onNewIntent(intent: android.content.Intent) {
-        super.onNewIntent(intent)
-        locateIntent(intent)
-    }
 }
